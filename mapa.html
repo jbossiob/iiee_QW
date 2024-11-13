@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo - OpenLayers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol/ol.css">
+    <script src="https://cdn.jsdelivr.net/npm/ol/ol.js"></script>
+    <style>
+        #map { width: 100%; height: 90vh; }
+    </style>
+</head>
+<body>
+    <h2>Mapa de Instituciones Educativas</h2>
+    <div id="map"></div>
+    <script>
+        // Crear el mapa base
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-75.0152, -9.1899]), // Centrar en Perú
+                zoom: 5
+            })
+        });
+
+        // Cargar la capa GeoJSON
+       var vectorLayer = new ol.layer.Vector({
+    source: new ol.source.Vector({
+        url: 'https://drive.google.com/file/d/1kcvL3kTz9IkdLA5pptIk4GC3HWxoNHCW/view?usp=sharing',
+        format: new ol.format.GeoJSON()
+    }),
+    style: function(feature) {
+        var department = feature.get('department');
+        var color = {
+            'AMAZONAS': '#1f78b4',
+            'LIMA': '#33a02c',
+            'CUSCO': '#e31a1c'
+        }[department] || '#ff7f00';
+        
+        return new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 5,
+                fill: new ol.style.Fill({ color: color }),
+                stroke: new ol.style.Stroke({ color: '#000', width: 1 })
+            })
+        });
+    }
+});
+
+        map.addLayer(vectorLayer);
+    </script>
+</body>
+</html>
